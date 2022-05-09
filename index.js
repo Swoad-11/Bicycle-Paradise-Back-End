@@ -1,7 +1,8 @@
 const express = require('express');
 const cors = require('cors');
 const app = express();
-const { MongoClient, ServerApiVersion } = require('mongodb');
+require('dotenv').config();
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const port = process.env.PORT || 5000;
 
 //user: dbUser11
@@ -9,20 +10,29 @@ const port = process.env.PORT || 5000;
 
 
 
-const uri = "mongodb+srv://dbUser11:GOe4XeYoMsVPhhSw@cluster0.udxz7.mongodb.net/myFirstDatabase?retryWrites=true&w=majority";
+const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.udxz7.mongodb.net/myFirstDatabase?retryWrites=true&w=majority`;
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
 
 async function run() {
     try {
         await client.connect();
-        const database = client.db("bicycleWarhouse").collection("user");
+        const database = client.db("bicycleParadise").collection("items");
         // create a document to insert
-        const user = {
-            Name: "Toufiq Islam",
-            email: "toufiq11swoad@gmail.com",
-        }
-        const result = await database.insertOne(user);
-        console.log(`A document was inserted with the _id: ${result.insertedId}`);
+        app.get('/items', async (req, res) => {
+            const query = {};
+            const cursor = database.find(query);
+            const items = await cursor.toArray();
+            res.send(items);
+        });
+
+
+        app.get('/items/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: ObjectId(id) };
+            const inventory = await database.findOne(query);
+            res.send(inventory);
+        });
+
     } finally {
         //await client.close();
     }
@@ -35,9 +45,9 @@ app.use(cors());
 app.use(express.json());
 
 app.get('/', (req, res) => {
-    res.send("running.....");
+    res.send("running Bicycle Paradise.....");
 });
 
 app.listen(port, () => {
-    console.log('db connected');
+    console.log('Listening to port', port);
 });
