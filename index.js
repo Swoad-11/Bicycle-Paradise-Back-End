@@ -53,7 +53,7 @@ async function run() {
                 }
             };
             const item = await database.updateOne(filter, updatedDoc, options);
-            res.send(car);
+            res.send(item);
 
         });
 
