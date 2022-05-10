@@ -37,7 +37,7 @@ async function run() {
         //add new item
         app.post('/items', async (req, res) => {
             const newItem = req.body;
-            const item = await carCollection.insertOne(newItem);
+            const item = await database.insertOne(newItem);
             res.send(item);
         });
 
