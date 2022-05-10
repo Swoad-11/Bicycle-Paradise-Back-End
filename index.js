@@ -57,6 +57,17 @@ async function run() {
 
         });
 
+        // sort api
+        app.get('/items', async (req, res) => {
+            const authHeader = req.headers.authorization;
+            const email = req.query.email;
+            const query = { email: email };
+            const cursor = database.find(query);
+            const item = await cursor.toArray();
+            res.send(item);
+
+        })
+
 
     } finally {
         //await client.close();
