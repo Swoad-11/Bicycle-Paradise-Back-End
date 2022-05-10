@@ -17,6 +17,7 @@ async function run() {
     try {
         await client.connect();
         const database = client.db("bicycleParadise").collection("items");
+
         // create a document to insert
         app.get('/items', async (req, res) => {
             const query = {};
@@ -25,11 +26,19 @@ async function run() {
             res.send(items);
         });
 
+        //get one item
         app.get('/items/:id', async (req, res) => {
             const id = req.params.id;
             const query = { _id: ObjectId(id) };
             const inventory = await database.findOne(query);
             res.send(inventory);
+        });
+
+        //add new item
+        app.post('/items', async (req, res) => {
+            const newItem = req.body;
+            const item = await carCollection.insertOne(newItem);
+            res.send(item);
         });
 
 
